@@ -1,83 +1,68 @@
 import platformService from "../services/platform.service.js";
+import httpStatus from "http-status";
+import logger from "../config/logger.js";
 
 const createPlatform = async (req, res) => {
-    try {
-        const result = await platformService.addPlatform(req.body);
+  logger.info(`Creating platform with data: ${JSON.stringify(req.body)}`);
 
-        return res.status(201).json({
-            success: true,
-            statusCode: 201,
-            message: "Platform created successfully",
-            data: { id: result.id },
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            statusCode: 400,
-            message: error.message,
-            timestamp: new Date().toISOString()
-        });
-    }
+  const result = await platformService.addPlatform(req.body);
+
+  logger.info(`Platform created successfully with ID: ${result.id}`);
+  return res.status(httpStatus.CREATED).json({
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "Platform created successfully",
+    data: { id: result.id },
+    timestamp: new Date().toISOString(),
+  });
 };
 
 const getPlatforms = async (req, res) => {
-    try {
-        const data = await platformService.getPlatforms();
+  logger.info("Fetching all platforms");
 
-        return res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: "Platforms retrieved successfully",
-            data: {
-                count: data.length,
-                platforms: data
-            },
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            statusCode: 400,
-            message: error.message,
-            timestamp: new Date().toISOString()
-        });
-    }
+  const data = await platformService.getPlatforms();
+
+  logger.info(`Retrieved ${data.length} platforms successfully`);
+  return res.status(httpStatus.OK).json({
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Platforms retrieved successfully",
+    data: {
+      count: data.length,
+      platforms: data,
+    },
+    timestamp: new Date().toISOString(),
+  });
 };
 
 const getPlatformByName = async (req, res) => {
-    try {
-        const { platformName } = req.params;
-        const data = await platformService.getPlatformByName(platformName);
+  const { platformName } = req.params;
+  logger.info(`Fetching platform: ${platformName}`);
 
-        if (!data) {
-            return res.status(404).json({
-                success: false,
-                statusCode: 404,
-                message: `Platform '${platformName}' not found`,
-                timestamp: new Date().toISOString()
-            });
-        }
+  const data = await platformService.getPlatformByName(platformName);
 
-        return res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: "Platform retrieved successfully",
-            data,
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            statusCode: 400,
-            message: error.message,
-            timestamp: new Date().toISOString()
-        });
-    }
+  if (!data) {
+    logger.warn(`Platform '${platformName}' not found`);
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: `Platform '${platformName}' not found`,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  logger.info(`Platform '${platformName}' retrieved successfully`);
+  return res.status(httpStatus.OK).json({
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Platform retrieved successfully",
+    data,
+    timestamp: new Date().toISOString(),
+  });
 };
 
 export default {
-    createPlatform,
-    getPlatforms,
-    getPlatformByName
+  createPlatform,
+  getPlatforms,
+  getPlatformByName,
 };

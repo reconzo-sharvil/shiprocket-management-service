@@ -1,108 +1,83 @@
 import clientsService from "../services/clients.service.js";
 import platformService from "../services/platform.service.js";
+import httpStatus from "http-status";
+import logger from "../config/logger.js";
 
 const getClient = async (req, res) => {
-    try {
-        const { clientName } = req.params;
-        const data = await clientsService.getClientByName(clientName);
+  const { clientName } = req.params;
+  logger.info(`Fetching client: ${clientName}`);
+  
+  const data = await clientsService.getClientByName(clientName);
 
-        if (!data || data.length === 0) {
-            return res.status(404).json({
-                success: false,
-                statusCode: 404,
-                message: `Client '${clientName}' not found`,
-                timestamp: new Date().toISOString()
-            });
-        }
+  if (!data || data.length === 0) {
+    logger.warn(`Client '${clientName}' not found`);
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: `Client '${clientName}' not found`,
+      timestamp: new Date().toISOString(),
+    });
+  }
 
-        return res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: "Client retrieved successfully",
-            data: {
-                count: data.length,
-                clients: data
-            },
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            statusCode: 400,
-            message: error.message,
-            timestamp: new Date().toISOString()
-        });
-    }
+  logger.info(`Client '${clientName}' retrieved successfully`);
+  return res.status(httpStatus.OK).json({
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Client retrieved successfully",
+    data: {
+      count: data.length,
+      clients: data,
+    },
+    timestamp: new Date().toISOString(),
+  });
 };
 
 const createClient = async (req, res) => {
-    try {
-        const { clientName, platform } = req.params;
+  const { clientName, platform } = req.params;
+  logger.info(`Creating client: ${clientName} for platform: ${platform}`);
+  
+  const platformDetails = await platformService.getPlatformByName(platform);
 
-        const platformDetails = await platformService.getPlatformByName(platform);
+  const clientData = {
+    ...req.body,
+    client_name: clientName,
+    owner_name: platform,
+  };
 
-        if (!platformDetails) {
-            return res.status(404).json({
-                success: false,
-                statusCode: 404,
-                message: `Platform '${platform}' not found`,
-                timestamp: new Date().toISOString()
-            });
-        }
+  const result = await clientsService.addClient(clientData, platformDetails);
 
-        const clientData = {
-            ...req.body,
-            client_name: clientName,
-            owner_name: platform
-        };
-
-        const result = await clientsService.addClient(clientData, platformDetails);
-
-        return res.status(201).json({
-            success: true,
-            statusCode: 201,
-            message: "Client created successfully",
-            data: {
-                id: result.id,
-                client_name: clientName,
-                platform: platform
-            },
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            statusCode: 400,
-            message: error.message,
-            timestamp: new Date().toISOString()
-        });
-    }
+  logger.info(`Client '${clientName}' created successfully with ID: ${result.id}`);
+  return res.status(httpStatus.CREATED).json({
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "Client created successfully",
+    data: {
+      id: result.id,
+      client_name: clientName,
+      platform: platform,
+    },
+    timestamp: new Date().toISOString(),
+  });
 };
 
 const getClientStatus = async (req, res) => {
-    try {
-        const { clientName } = req.params;
-        const data = await clientsService.getClientFieldsStatus(clientName);
+  const { clientName } = req.params;
+  logger.info(`Fetching status for client: ${clientName}`);
+  
+  const data = await clientsService.getClientFieldsStatus(clientName);
 
-        return res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: "Client status retrieved successfully",
-            data,
-            timestamp: new Date().toISOString()
-        });
-    } catch (error) {
-        return res.status(404).json({
-            success: false,
-            statusCode: 404,
-            message: error.message,
-            timestamp: new Date().toISOString()
-        });
-    }
+  logger.info(`Client '${clientName}' status retrieved successfully`);
+  return res.status(httpStatus.OK).json({
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Client status retrieved successfully",
+    data,
+    timestamp: new Date().toISOString(),
+  });
 };
 
 export default {
-    getClient,
-    createClient,
-    getClientStatus
+  getClient,
+  createClient,
+  getClientStatus,
 };

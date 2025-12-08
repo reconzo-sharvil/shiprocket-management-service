@@ -12,11 +12,11 @@ const __dirname = path.dirname(__filename);
 const DB_PATH = path.join(__dirname, "../../db/database.sqlite");
 
 const db = new sqlite3.Database(DB_PATH, (err) => {
-    if (err) {
-        console.error("DB Error:", err.message);
-    } else {
-        console.log("Connected to SQLite DB");
-    }
+  if (err) {
+    console.error("DB Error:", err.message);
+  } else {
+    console.log("Connected to SQLite DB");
+  }
 });
 
 db.run(PLATFORM_TABLE_SQL);

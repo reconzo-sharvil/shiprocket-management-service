@@ -1,4 +1,4 @@
-import { dbAll, dbRun, dbGet } from "../middlewares/db.middleware.js";
+import { dbAll, dbRun } from "../middlewares/db.middleware.js";
 
 const getClientByName = async (clientName) => {
   const sql = "SELECT * FROM clients WHERE client_name = ?";
@@ -10,8 +10,9 @@ const addClient = async (data, platformDetails) => {
         INSERT INTO clients (
             client_name, client_id, client_secret, owner_name, username,
             password, primary_key, secondary_key, account_id,
-            token_expires_at, auth_name, auth_url, resource_name, resource_url
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            token_expires_at, auth_name, auth_url, resource_name, resource_url,
+            ip_address
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
   const params = [
@@ -29,6 +30,7 @@ const addClient = async (data, platformDetails) => {
     platformDetails ? platformDetails.auth_url : null,
     platformDetails ? platformDetails.resource_name : null,
     platformDetails ? platformDetails.resource_url : null,
+    data.ip_address ,
   ];
 
   const result = await dbRun(sql, params);
@@ -39,7 +41,6 @@ const updateClient = async (clientName, data, platformDetails) => {
   const fields = [];
   const params = [];
 
-  // Dynamically build update query based on provided fields
   if (data.client_id !== undefined) {
     fields.push("client_id = ?");
     params.push(data.client_id);
@@ -76,8 +77,11 @@ const updateClient = async (clientName, data, platformDetails) => {
     fields.push("token_expires_at = ?");
     params.push(data.token_expires_at);
   }
+  if (data.ip_address !== undefined) {
+    fields.push("ip_address = ?");
+    params.push(data.ip_address);
+  }
 
-  // Update platform details if provided
   if (platformDetails) {
     if (platformDetails.auth_name !== undefined) {
       fields.push("auth_name = ?");
@@ -110,15 +114,21 @@ const updateClient = async (clientName, data, platformDetails) => {
 
 const getClientFieldsStatus = async (clientName) => {
   const sql = "SELECT * FROM clients WHERE client_name = ?";
-  const client = await dbGet(sql, [clientName]);
+  const clientRows = await dbAll(sql, [clientName]);
 
-  if (!client) {
+  if (!clientRows || clientRows.length === 0) {
     throw new Error(`Client '${clientName}' not found`);
   }
 
-  return {
-    [clientName]: !!(client.owner_name && client.owner_name.trim() !== ""),
-  };
+  const statusObj = {};
+
+  clientRows.forEach((client) => {
+    statusObj[client.owner_name] = !!(
+      client.owner_name && client.owner_name.trim() !== ""
+    );
+  });
+
+  return statusObj;
 };
 
 export default {

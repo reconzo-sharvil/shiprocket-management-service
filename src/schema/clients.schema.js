@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS clients (
     auth_name TEXT,
     auth_url TEXT,
     resource_name TEXT,
-    resource_url TEXT
+    resource_url TEXT,
+    ip_address TEXT
 );
 `;

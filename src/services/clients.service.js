@@ -43,41 +43,8 @@ const getClientFieldsStatus = async (clientName) => {
     throw new Error(`Client '${clientName}' not found`);
   }
 
-  const fields = [
-    "client_id",
-    "client_secret",
-    "owner_name",
-    "username",
-    "password",
-    "primary_key",
-    "secondary_key",
-    "account_id",
-    "token_expires_at",
-    "auth_name",
-    "auth_url",
-    "resource_name",
-    "resource_url",
-  ];
-
-  const filledFields = [];
-  const emptyFields = [];
-
-  fields.forEach((field) => {
-    if (client[field] && client[field].trim() !== "") {
-      filledFields.push(field);
-    } else {
-      emptyFields.push(field);
-    }
-  });
-
   return {
-    client_name: clientName,
-    platform_name: client.platform_name,
-    total_fields: fields.length,
-    filled_count: filledFields.length,
-    empty_count: emptyFields.length,
-    filled_fields: filledFields,
-    empty_fields: emptyFields,
+    [clientName]: !!(client.owner_name && client.owner_name.trim() !== "")
   };
 };
 

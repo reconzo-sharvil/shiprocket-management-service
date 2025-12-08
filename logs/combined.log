@@ -1,2 +1,9 @@
 2025-12-08 12:28:22 [info]: Fetching client: AmazonStore
 2025-12-08 12:28:22 [info]: Client 'AmazonStore' retrieved successfully
+2025-12-08 13:10:42 [info]: Creating client: nutraj for platform: Stripe
+
+2025-12-08 13:10:42 [info]: Client 'nutraj' created successfully with ID: 2
+2025-12-08 13:16:00 [info]: Creating client: shiprocket-onboarding.html for platform: Shiprocket
+2025-12-08 13:16:00 [info]: Client 'shiprocket-onboarding.html' created successfully with ID: 1
+2025-12-08 13:17:24 [info]: Creating client: shiprocket-onboarding.html for platform: Shiprocket
+2025-12-08 13:17:24 [info]: Client 'shiprocket-onboarding.html' created successfully with ID: 2

@@ -1,0 +1,18 @@
+services:
+  backend:
+    build: .
+    container_name: client_backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules  
+      - sqlite_data:/app/db
+      - logs_data:/app/logs
+    environment:
+      NODE_ENV: development
+    restart: always
+
+volumes:
+  sqlite_data:
+  logs_data:

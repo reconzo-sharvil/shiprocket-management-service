@@ -5,5 +5,7 @@ const router = express.Router();
 
 router.get("/", PlatformController.getPlatforms);
 router.post("/", PlatformController.createPlatform);
+router.put("/:platformName", PlatformController.updatePlatform);
+router.get("/:platformName", PlatformController.getPlatformByName);
 
 export default router;

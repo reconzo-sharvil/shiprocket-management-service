@@ -61,8 +61,42 @@ const getPlatformByName = async (req, res) => {
   });
 };
 
+const updatePlatform = async (req, res) => {
+  const { platformName } = req.params;
+  logger.info(`Updating platform: ${platformName}`);
+
+  const existingPlatform = await platformService.getPlatformByName(
+    platformName
+  );
+
+  if (!existingPlatform) {
+    logger.warn(`Platform '${platformName}' not found for update`);
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: `Platform '${platformName}' not found`,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  const result = await platformService.updatePlatform(platformName, req.body);
+
+  logger.info(`Platform '${platformName}' updated successfully`);
+  return res.status(httpStatus.OK).json({
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Platform updated successfully",
+    data: {
+      changes: result.changes,
+      platform_name: platformName,
+    },
+    timestamp: new Date().toISOString(),
+  });
+};
+
 export default {
   createPlatform,
   getPlatforms,
   getPlatformByName,
+  updatePlatform,
 };

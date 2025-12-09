@@ -1,25 +1,34 @@
-import { dbAll, dbRun } from "../middlewares/db.middleware.js";
+import { dbAll, dbRun, dbGet } from "../middlewares/db.middleware.js";
 
-const getClientByName = async (clientName) => {
-  const sql = "SELECT * FROM clients WHERE client_name = ?";
-  return await dbAll(sql, [clientName]);
+const DEFAULT_CLIENT_NAME = "reconzo";
+
+const getClientByOwnerName = async (ownerName) => {
+  const sql = "SELECT * FROM clients WHERE owner_name = ?";
+  return await dbAll(sql, [ownerName]);
+};
+
+const checkClientExists = async (ownerName, resourceName) => {
+  const sql =
+    "SELECT * FROM clients WHERE owner_name = ? AND resource_name = ?";
+  const result = await dbGet(sql, [ownerName, resourceName]);
+  return !!result;
 };
 
 const addClient = async (data, platformDetails) => {
   const sql = `
-        INSERT INTO clients (
-            client_name, client_id, client_secret, owner_name, username,
-            password, primary_key, secondary_key, account_id,
-            token_expires_at, auth_name, auth_url, resource_name, resource_url,
-            ip_address
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+    INSERT INTO clients (
+      client_name, owner_name, client_id, client_secret, username,
+      password, primary_key, secondary_key, account_id,
+      token_expires_at, auth_name, auth_url, resource_name, resource_url,
+      ip_address
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
 
   const params = [
-    data.client_name,
+    DEFAULT_CLIENT_NAME,
+    data.owner_name,
     data.client_id,
     data.client_secret,
-    data.owner_name,
     data.username,
     data.password,
     data.primary_key,
@@ -30,14 +39,14 @@ const addClient = async (data, platformDetails) => {
     platformDetails ? platformDetails.auth_url : null,
     platformDetails ? platformDetails.resource_name : null,
     platformDetails ? platformDetails.resource_url : null,
-    data.ip_address ,
+    data.ip_address,
   ];
 
   const result = await dbRun(sql, params);
   return { id: result.lastID };
 };
 
-const updateClient = async (clientName, data, platformDetails) => {
+const updateClient = async (ownerName, resourceName, data, platformDetails) => {
   const fields = [];
   const params = [];
 
@@ -48,10 +57,6 @@ const updateClient = async (clientName, data, platformDetails) => {
   if (data.client_secret !== undefined) {
     fields.push("client_secret = ?");
     params.push(data.client_secret);
-  }
-  if (data.owner_name !== undefined) {
-    fields.push("owner_name = ?");
-    params.push(data.owner_name);
   }
   if (data.username !== undefined) {
     fields.push("username = ?");
@@ -105,35 +110,63 @@ const updateClient = async (clientName, data, platformDetails) => {
     throw new Error("No fields to update");
   }
 
-  params.push(clientName);
-  const sql = `UPDATE clients SET ${fields.join(", ")} WHERE client_name = ?`;
+  params.push(ownerName);
+  params.push(resourceName);
+  const sql = `UPDATE clients SET ${fields.join(
+    ", "
+  )} WHERE owner_name = ? AND resource_name = ?`;
 
   const result = await dbRun(sql, params);
   return { changes: result.changes };
 };
 
-const getClientFieldsStatus = async (clientName) => {
-  const sql = "SELECT * FROM clients WHERE client_name = ?";
-  const clientRows = await dbAll(sql, [clientName]);
+const deleteClient = async (ownerName, resourceName) => {
+  const sql = "DELETE FROM clients WHERE owner_name = ? AND resource_name = ?";
+  const result = await dbRun(sql, [ownerName, resourceName]);
+  return { changes: result.changes };
+};
 
-  if (!clientRows || clientRows.length === 0) {
-    throw new Error(`Client '${clientName}' not found`);
-  }
+const getClientFieldsStatus = async (ownerName) => {
+  const statusSql = `
+    SELECT resource_name, 
+           CASE 
+             WHEN client_id IS NOT NULL AND client_id != '' THEN 1
+             ELSE 0
+           END as is_configured
+    FROM clients
+    WHERE owner_name = ?
+  `;
 
-  const statusObj = {};
+  const mappingSql = `
+    SELECT resource_name 
+    FROM client_platform_mapping
+    WHERE owner_name = ?
+  `;
 
-  clientRows.forEach((client) => {
-    statusObj[client.owner_name] = !!(
-      client.owner_name && client.owner_name.trim() !== ""
-    );
+  const statusRows = await dbAll(statusSql, [ownerName]);
+  const mappingRows = await dbAll(mappingSql, [ownerName]);
+
+  const status = {};
+  statusRows.forEach((row) => {
+    status[row.resource_name] = !!row.is_configured;
   });
 
-  return statusObj;
+  const resourcesMapped = {};
+  mappingRows.forEach((row) => {
+    resourcesMapped[row.resource_name] = true;
+  });
+
+  return {
+    status,
+    resourcesMapped,
+  };
 };
 
 export default {
-  getClientByName,
+  getClientByOwnerName,
+  checkClientExists,
   addClient,
   updateClient,
+  deleteClient,
   getClientFieldsStatus,
 };

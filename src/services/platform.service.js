@@ -3,15 +3,14 @@ import { dbAll, dbRun, dbGet } from "../middlewares/db.middleware.js";
 const addPlatform = async (data) => {
   const sql = `
         INSERT INTO platforms (
-             owner_name, auth_name, auth_url, resource_name, resource_url
-        ) VALUES (?, ?, ?, ?, ?)
+             resource_name, auth_name, auth_url, resource_url
+        ) VALUES (?, ?, ?, ?)
     `;
 
   const params = [
-    data.owner_name,
+    data.resource_name,
     data.auth_name,
     data.auth_url,
-    data.resource_name,
     data.resource_url,
   ];
 
@@ -24,23 +23,29 @@ const getPlatforms = async () => {
   return await dbAll(sql);
 };
 
-const getPlatformByName = async (platformName) => {
+const getPlatformByResourceName = async (resourceName) => {
   const sql = `
         SELECT auth_name, auth_url, resource_name, resource_url 
         FROM platforms 
-        WHERE owner_name = ?
+        WHERE resource_name = ?
     `;
-  const result = await dbGet(sql, [platformName]);
+  const result = await dbGet(sql, [resourceName]);
   return result || null;
 };
 
-const updatePlatform = async (platformName, data) => {
+const checkPlatformExists = async (resourceName) => {
+  const sql = "SELECT * FROM platforms WHERE resource_name = ?";
+  const result = await dbGet(sql, [resourceName]);
+  return !!result;
+};
+
+const updatePlatform = async (resourceName, data) => {
   const fields = [];
   const params = [];
 
-  if (data.owner_name !== undefined) {
-    fields.push("owner_name = ?");
-    params.push(data.owner_name);
+  if (data.resource_name !== undefined) {
+    fields.push("resource_name = ?");
+    params.push(data.resource_name);
   }
   if (data.auth_name !== undefined) {
     fields.push("auth_name = ?");
@@ -49,10 +54,6 @@ const updatePlatform = async (platformName, data) => {
   if (data.auth_url !== undefined) {
     fields.push("auth_url = ?");
     params.push(data.auth_url);
-  }
-  if (data.resource_name !== undefined) {
-    fields.push("resource_name = ?");
-    params.push(data.resource_name);
   }
   if (data.resource_url !== undefined) {
     fields.push("resource_url = ?");
@@ -63,16 +64,26 @@ const updatePlatform = async (platformName, data) => {
     throw new Error("No fields to update");
   }
 
-  params.push(platformName);
-  const sql = `UPDATE platforms SET ${fields.join(", ")} WHERE owner_name = ?`;
+  params.push(resourceName);
+  const sql = `UPDATE platforms SET ${fields.join(
+    ", "
+  )} WHERE resource_name = ?`;
 
   const result = await dbRun(sql, params);
+  return { changes: result.changes };
+};
+
+const deletePlatform = async (resourceName) => {
+  const sql = "DELETE FROM platforms WHERE resource_name = ?";
+  const result = await dbRun(sql, [resourceName]);
   return { changes: result.changes };
 };
 
 export default {
   addPlatform,
   getPlatforms,
-  getPlatformByName,
+  getPlatformByResourceName,
+  checkPlatformExists,
   updatePlatform,
+  deletePlatform,
 };

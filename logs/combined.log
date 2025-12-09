@@ -7,3 +7,49 @@
 2025-12-08 13:16:00 [info]: Client 'shiprocket-onboarding.html' created successfully with ID: 1
 2025-12-08 13:17:24 [info]: Creating client: shiprocket-onboarding.html for platform: Shiprocket
 2025-12-08 13:17:24 [info]: Client 'shiprocket-onboarding.html' created successfully with ID: 2
+2025-12-09 11:48:45 [info]: Creating platform with data: {"owner_name":"Shiprocket","auth_name":"login","auth_url":"https://shiprocket.in/login","resource_name":"login_api","resource_url":"https://apiv2.shiprocket.in/v1/external/auth/login"}
+2025-12-09 11:48:45 [info]: Platform created successfully with ID: 1
+2025-12-09 11:48:54 [info]: Fetching all platforms
+2025-12-09 11:48:54 [info]: Retrieved 1 platforms successfully
+2025-12-09 11:49:30 [info]: Creating client: Nivea for platform: Shiprocket
+2025-12-09 11:49:30 [info]: Client 'Nivea' created successfully with ID: 1
+2025-12-09 11:49:42 [info]: Fetching client: Nivea
+2025-12-09 11:49:42 [info]: Client 'Nivea' retrieved successfully
+2025-12-09 11:50:04 [info]: Fetching status for client: Nivea
+2025-12-09 11:50:04 [info]: Client 'Nivea' status retrieved successfully
+2025-12-09 12:01:29 [info]: Fetching client: Nivea
+2025-12-09 12:01:29 [info]: Client 'Nivea' retrieved successfully
+2025-12-09 13:36:37 [info]: Fetching mappings for client: MamaEarth
+2025-12-09 13:36:37 [info]: Retrieved 0 mappings for client 'MamaEarth'
+2025-12-09 13:37:46 [info]: Creating mapping for client: mamaearth and platform: razorpay
+2025-12-09 13:37:46 [info]: Mapping created successfully with ID: 1
+2025-12-09 13:37:52 [info]: Fetching mappings for client: MamaEarth
+2025-12-09 13:37:52 [info]: Retrieved 0 mappings for client 'MamaEarth'
+2025-12-09 13:38:20 [info]: Fetching mappings for client: MamaEarth
+2025-12-09 13:38:20 [info]: Retrieved 0 mappings for client 'MamaEarth'
+2025-12-09 13:38:34 [info]: Fetching mappings for client: mamaearth
+2025-12-09 13:38:34 [info]: Retrieved 1 mappings for client 'mamaearth'
+2025-12-09 13:38:55 [info]: Fetching status for client: mamaearth
+2025-12-09 13:38:55 [info]: Client 'mamaearth' status retrieved successfully
+2025-12-09 13:40:34 [info]: Creating platform with data: {"resource_name":"razorpay","auth_name":"razorpay_auth","auth_url":"https://api.razorpay.com/auth","resource_url":"https://api.razorpay.com"}
+2025-12-09 13:40:34 [info]: Platform created successfully with ID: 1
+2025-12-09 13:40:51 [info]: Fetching all platforms
+2025-12-09 13:40:51 [info]: Retrieved 1 platforms successfully
+2025-12-09 13:41:36 [info]: Creating client: mamaearth for platform: razorpay
+2025-12-09 13:41:36 [info]: Client 'mamaearth' created successfully with ID: 1
+2025-12-09 13:41:49 [info]: Fetching client: mamaearth
+2025-12-09 13:41:49 [info]: Client 'mamaearth' retrieved successfully
+2025-12-09 13:49:35 [info]: Deleting client: mamaearth for platform: razorpay
+2025-12-09 13:49:35 [info]: Client 'mamaearth' with platform 'razorpay' deleted successfully
+2025-12-09 13:49:46 [info]: Fetching client: mamaearh
+2025-12-09 13:49:46 [warn]: Client 'mamaearh' not found
+2025-12-09 13:51:48 [info]: Creating mapping for client: mamaearth and platform: razorpay
+2025-12-09 13:51:48 [info]: Mapping created successfully with ID: 1
+2025-12-09 13:51:53 [info]: Fetching mappings for client: mamaearth
+2025-12-09 13:51:53 [info]: Retrieved 1 mappings for client 'mamaearth'
+2025-12-09 13:52:06 [info]: Creating platform with data: {"resource_name":"razorpay","auth_name":"razorpay_auth","auth_url":"https://api.razorpay.com/auth","resource_url":"https://api.razorpay.com"}
+2025-12-09 13:52:06 [info]: Platform created successfully with ID: 1
+2025-12-09 13:52:36 [info]: Creating client: mamaearth for platform: razorpay
+2025-12-09 13:52:36 [info]: Client 'mamaearth' created successfully with ID: 1
+2025-12-09 13:54:32 [info]: Creating client: mamaearth for platform: razorpay
+2025-12-09 13:54:32 [warn]: Client 'mamaearth' with platform 'razorpay' already exists

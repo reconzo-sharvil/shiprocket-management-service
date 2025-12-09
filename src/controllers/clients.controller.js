@@ -4,22 +4,22 @@ import httpStatus from "http-status";
 import logger from "../config/logger.js";
 
 const getClient = async (req, res) => {
-  const { clientName } = req.params;
-  logger.info(`Fetching client: ${clientName}`);
+  const { ownerName } = req.params;
+  logger.info(`Fetching client: ${ownerName}`);
 
-  const data = await clientsService.getClientByName(clientName);
+  const data = await clientsService.getClientByOwnerName(ownerName);
 
   if (!data || data.length === 0) {
-    logger.warn(`Client '${clientName}' not found`);
+    logger.warn(`Client '${ownerName}' not found`);
     return res.status(httpStatus.NOT_FOUND).json({
       success: false,
       statusCode: httpStatus.NOT_FOUND,
-      message: `Client '${clientName}' not found`,
+      message: `Client '${ownerName}' not found`,
       timestamp: new Date().toISOString(),
     });
   }
 
-  logger.info(`Client '${clientName}' retrieved successfully`);
+  logger.info(`Client '${ownerName}' retrieved successfully`);
   return res.status(httpStatus.OK).json({
     success: true,
     statusCode: httpStatus.OK,
@@ -33,21 +33,48 @@ const getClient = async (req, res) => {
 };
 
 const createClient = async (req, res) => {
-  const { clientName, platform } = req.params;
-  logger.info(`Creating client: ${clientName} for platform: ${platform}`);
+  const { ownerName, resourceName } = req.params;
+  logger.info(`Creating client: ${ownerName} for platform: ${resourceName}`);
 
-  const platformDetails = await platformService.getPlatformByName(platform);
+  const clientExists = await clientsService.checkClientExists(
+    ownerName,
+    resourceName
+  );
+  if (clientExists) {
+    logger.warn(
+      `Client '${ownerName}' with platform '${resourceName}' already exists`
+    );
+    return res.status(httpStatus.CONFLICT).json({
+      success: false,
+      statusCode: httpStatus.CONFLICT,
+      message: `Client '${ownerName}' with platform '${resourceName}' already exists`,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  const platformDetails = await platformService.getPlatformByResourceName(
+    resourceName
+  );
+  if (!platformDetails) {
+    logger.warn(`Platform '${resourceName}' not found`);
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: `Platform '${resourceName}' not found`,
+      timestamp: new Date().toISOString(),
+    });
+  }
 
   const clientData = {
     ...req.body,
-    client_name: clientName,
-    owner_name: platform,
+    owner_name: ownerName,
+    resource_name: resourceName,
   };
 
   const result = await clientsService.addClient(clientData, platformDetails);
 
   logger.info(
-    `Client '${clientName}' created successfully with ID: ${result.id}`
+    `Client '${ownerName}' created successfully with ID: ${result.id}`
   );
   return res.status(httpStatus.CREATED).json({
     success: true,
@@ -55,62 +82,106 @@ const createClient = async (req, res) => {
     message: "Client created successfully",
     data: {
       id: result.id,
-      client_name: clientName,
-      platform: platform,
+      owner_name: ownerName,
+      resource_name: resourceName,
     },
     timestamp: new Date().toISOString(),
   });
 };
 
 const updateClient = async (req, res) => {
-  const { clientName } = req.params;
-  logger.info(`Updating client: ${clientName}`);
+  const { ownerName, resourceName } = req.params;
+  logger.info(`Updating client: ${ownerName} for platform: ${resourceName}`);
 
-  const existingClient = await clientsService.getClientByName(clientName);
-
-  if (!existingClient || existingClient.length === 0) {
-    logger.warn(`Client '${clientName}' not found for update`);
+  const clientExists = await clientsService.checkClientExists(
+    ownerName,
+    resourceName
+  );
+  if (!clientExists) {
+    logger.warn(
+      `Client '${ownerName}' with platform '${resourceName}' not found for update`
+    );
     return res.status(httpStatus.NOT_FOUND).json({
       success: false,
       statusCode: httpStatus.NOT_FOUND,
-      message: `Client '${clientName}' not found`,
+      message: `Client '${ownerName}' with platform '${resourceName}' not found`,
       timestamp: new Date().toISOString(),
     });
   }
 
   let platformDetails = null;
-  if (req.body.owner_name) {
-    platformDetails = await platformService.getPlatformByName(
-      req.body.owner_name
+  if (req.body.resource_name) {
+    platformDetails = await platformService.getPlatformByResourceName(
+      req.body.resource_name
     );
   }
 
   const result = await clientsService.updateClient(
-    clientName,
+    ownerName,
+    resourceName,
     req.body,
     platformDetails
   );
 
-  logger.info(`Client '${clientName}' updated successfully`);
+  logger.info(`Client '${ownerName}' updated successfully`);
   return res.status(httpStatus.OK).json({
     success: true,
     statusCode: httpStatus.OK,
     message: "Client updated successfully",
     data: {
       changes: result.changes,
-      client_name: clientName,
+      owner_name: ownerName,
+      resource_name: resourceName,
+    },
+    timestamp: new Date().toISOString(),
+  });
+};
+
+const deleteClient = async (req, res) => {
+  const { ownerName, resourceName } = req.params;
+  logger.info(`Deleting client: ${ownerName} for platform: ${resourceName}`);
+
+  const clientExists = await clientsService.checkClientExists(
+    ownerName,
+    resourceName
+  );
+  if (!clientExists) {
+    logger.warn(
+      `Client '${ownerName}' with platform '${resourceName}' not found for deletion`
+    );
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: `Client '${ownerName}' with platform '${resourceName}' not found`,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  const result = await clientsService.deleteClient(ownerName, resourceName);
+
+  logger.info(
+    `Client '${ownerName}' with platform '${resourceName}' deleted successfully`
+  );
+  return res.status(httpStatus.OK).json({
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Client deleted successfully",
+    data: {
+      changes: result.changes,
+      owner_name: ownerName,
+      resource_name: resourceName,
     },
     timestamp: new Date().toISOString(),
   });
 };
 
 const getClientStatus = async (req, res) => {
-  const { clientName } = req.params;
-  logger.info(`Fetching status for client: ${clientName}`);
+  const { ownerName } = req.params;
+  logger.info(`Fetching status for client: ${ownerName}`);
 
-  const data = await clientsService.getClientFieldsStatus(clientName);
+  const data = await clientsService.getClientFieldsStatus(ownerName);
 
-  logger.info(`Client '${clientName}' status retrieved successfully`);
+  logger.info(`Client '${ownerName}' status retrieved successfully`);
   return res.status(httpStatus.OK).json({
     success: true,
     statusCode: httpStatus.OK,
@@ -124,5 +195,6 @@ export default {
   getClient,
   createClient,
   updateClient,
+  deleteClient,
   getClientStatus,
 };

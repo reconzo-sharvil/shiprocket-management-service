@@ -55,15 +55,6 @@ const createClient = async (req, res) => {
   const platformDetails = await platformService.getPlatformByResourceName(
     resourceName
   );
-  if (!platformDetails) {
-    logger.warn(`Platform '${resourceName}' not found`);
-    return res.status(httpStatus.NOT_FOUND).json({
-      success: false,
-      statusCode: httpStatus.NOT_FOUND,
-      message: `Platform '${resourceName}' not found`,
-      timestamp: new Date().toISOString(),
-    });
-  }
 
   const clientData = {
     ...req.body,

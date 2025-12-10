@@ -132,10 +132,7 @@ const deleteClient = async (ownerName, resourceName) => {
 const getClientFieldsStatus = async (ownerName) => {
   const statusSql = `
     SELECT resource_name, 
-           CASE 
-             WHEN client_id IS NOT NULL AND client_id != '' THEN 1
-             ELSE 0
-           END as is_configured
+           1 as is_configured
     FROM clients
     WHERE owner_name = ?
   `;
@@ -151,7 +148,7 @@ const getClientFieldsStatus = async (ownerName) => {
 
   const status = {};
   statusRows.forEach((row) => {
-    status[row.resource_name] = !!row.is_configured;
+    status[row.resource_name] = true;
   });
 
   const resourcesMapped = {};

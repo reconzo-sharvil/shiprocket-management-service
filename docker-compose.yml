@@ -6,7 +6,6 @@ services:
       - "3000:3000"
     volumes:
       - .:/app
-      - /app/node_modules  
       - sqlite_data:/app/db
       - logs_data:/app/logs
     environment:

@@ -37,7 +37,7 @@ const addClient = async (data, platformDetails) => {
     data.token_expires_at,
     platformDetails ? platformDetails.auth_name : null,
     platformDetails ? platformDetails.auth_url : null,
-    platformDetails ? platformDetails.resource_name : null,
+    platformDetails ? platformDetails.resource_name : data.resource_name,
     platformDetails ? platformDetails.resource_url : null,
     data.ip_address,
   ];
@@ -104,6 +104,9 @@ const updateClient = async (ownerName, resourceName, data, platformDetails) => {
       fields.push("resource_url = ?");
       params.push(platformDetails.resource_url);
     }
+  } else if (data.resource_name !== undefined) {
+    fields.push("resource_name = ?");
+    params.push(data.resource_name);
   }
 
   if (fields.length === 0) {

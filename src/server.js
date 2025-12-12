@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import routes from "./routes/index.js";
+import authenticateApiKey from "./middlewares/auth.middleware.js";
 
 dotenv.config();
 
@@ -9,11 +10,14 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/api/v1", routes);
 
+// Public route (no authentication)
 app.get("/", (req, res) => {
-  res.send("Hello from Express backend with SQLite!");
+  res.send("Server is running");
 });
+
+// Protected routes - Apply authentication middleware
+app.use("/api/v1", authenticateApiKey, routes);
 
 const PORT = process.env.PORT || 3000;
 const MODE = process.env.NODE_ENV || "development";

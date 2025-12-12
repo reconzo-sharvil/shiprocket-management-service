@@ -7,6 +7,12 @@ const getClientByOwnerName = async (ownerName) => {
   return await dbAll(sql, [ownerName]);
 };
 
+const getClientByOwnerAndResource = async (ownerName, resourceName) => {
+  const sql =
+    "SELECT * FROM clients WHERE owner_name = ? AND resource_name = ?";
+  return await dbGet(sql, [ownerName, resourceName]);
+};
+
 const checkClientExists = async (ownerName, resourceName) => {
   const sql =
     "SELECT * FROM clients WHERE owner_name = ? AND resource_name = ?";
@@ -164,6 +170,7 @@ const getClientFieldsStatus = async (ownerName) => {
 
 export default {
   getClientByOwnerName,
+  getClientByOwnerAndResource,
   checkClientExists,
   addClient,
   updateClient,

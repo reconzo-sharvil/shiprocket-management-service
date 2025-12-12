@@ -46,6 +46,58 @@ const getClient = async (req, res) => {
   }
 };
 
+const getClientByPlatform = async (req, res) => {
+  const { ownerName, resourceName } = req.params;
+
+  try {
+    logger.info(`Fetching client: ${ownerName} for platform: ${resourceName}`);
+
+    const data = await clientsService.getClientByOwnerAndResource(
+      ownerName,
+      resourceName
+    );
+
+    if (!data) {
+      logger.warn(
+        `Client '${ownerName}' with platform '${resourceName}' not found`
+      );
+      return res.status(httpStatus.NOT_FOUND).json({
+        success: false,
+        statusCode: httpStatus.NOT_FOUND,
+        message: `Client '${ownerName}' with platform '${resourceName}' not found`,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    logger.info(
+      `Client '${ownerName}' for platform '${resourceName}' retrieved successfully`
+    );
+    return res.status(httpStatus.OK).json({
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Client retrieved successfully",
+      data: data,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    logger.error(
+      `Error fetching client '${ownerName}' for platform '${resourceName}':`,
+      error
+    );
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      message: "An error occurred while fetching the client",
+      error: error.message,
+      timestamp: new Date().toISOString(),
+    });
+  } finally {
+    logger.debug(
+      `getClientByPlatform request completed for: ${ownerName}/${resourceName}`
+    );
+  }
+};
+
 const createClient = async (req, res) => {
   const { ownerName, resourceName } = req.params;
 
@@ -257,6 +309,7 @@ const getClientStatus = async (req, res) => {
 
 export default {
   getClient,
+  getClientByPlatform,
   createClient,
   updateClient,
   deleteClient,

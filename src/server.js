@@ -3,21 +3,14 @@ import dotenv from "dotenv";
 import cors from "cors";
 import routes from "./routes/index.js";
 import authenticateApiKey from "./middlewares/auth.middleware.js";
+import { corsOptions } from "./constants/cors.constants.js";
 
 dotenv.config();
 
 const app = express();
 
-const corsOptions = {
-  origin: "http://127.0.0.1:5500",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-};
-
-// Apply CORS globally
 app.use(cors(corsOptions));
 app.use(express.json());
-
 
 // Public route (no authentication)
 app.get("/", (req, res) => {

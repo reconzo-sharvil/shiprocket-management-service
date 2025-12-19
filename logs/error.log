@@ -1,0 +1,27 @@
+2025-12-18 12:46:43 [error]: Failed to fetch client credentials (401)
+2025-12-18 12:46:43 [error]: Error fetching client credentials: Failed to fetch client credentials
+2025-12-18 12:46:43 [error]: Failed to fetch reports for zazza: Failed to fetch client credentials
+2025-12-18 12:48:05 [error]: Failed to fetch client credentials (401)
+2025-12-18 12:48:05 [error]: Error fetching client credentials: Failed to fetch client credentials
+2025-12-18 12:48:05 [error]: Failed to fetch reports for zazza: Failed to fetch client credentials
+2025-12-18 12:50:40 [error]: Failed to fetch client credentials (401)
+2025-12-18 12:50:40 [error]: Error fetching client credentials: Failed to fetch client credentials
+2025-12-18 12:50:40 [error]: Failed to fetch reports for zazza: Failed to fetch client credentials
+2025-12-18 12:51:34 [error]: Failed to fetch client credentials (401)
+2025-12-18 12:51:34 [error]: Error fetching client credentials: Failed to fetch client credentials
+2025-12-18 12:51:34 [error]: Failed to fetch reports for zazza: Failed to fetch client credentials
+2025-12-18 13:33:17 [error]: Failed to fetch client credentials (401)
+2025-12-18 13:33:17 [error]: Error fetching client credentials: Failed to fetch client credentials
+2025-12-18 13:33:17 [error]: Failed to fetch reports for zazza: Failed to fetch client credentials
+2025-12-18 13:33:27 [error]: Shiprocket API error (403): Invalid email and password combination
+2025-12-18 13:33:27 [error]: Failed to fetch reports for zazza: Invalid email and password combination
+2025-12-18 13:34:40 [error]: Shiprocket API error (403): Invalid email and password combination
+2025-12-18 13:34:40 [error]: Failed to fetch reports for zazza: Invalid email and password combination
+2025-12-18 13:35:15 [error]: Shiprocket API error (403): Invalid email and password combination
+2025-12-18 13:35:15 [error]: Failed to fetch reports for zazza: Invalid email and password combination
+2025-12-18 13:35:27 [error]: Shiprocket API error (403): Invalid email and password combination
+2025-12-18 13:35:27 [error]: Failed to fetch reports for zazza: Invalid email and password combination
+2025-12-19 09:12:25 [error]: Shiprocket API error (401): Login failed
+2025-12-19 09:12:25 [error]: Failed to fetch reports for zazza: Shiprocket login failed
+2025-12-19 09:17:13 [error]: Shiprocket API error (403): Invalid email and password combination
+2025-12-19 09:17:13 [error]: Failed to fetch reports for zazza: Invalid email and password combination

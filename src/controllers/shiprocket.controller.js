@@ -42,11 +42,7 @@ const getAllReports = async (req, res) => {
   logger.info(`Shiprocket reports request for client: ${client}`);
 
   try {
-    // Get client credentials
     const clientCreds = await shiprocketService.getClientCred(client);
-    console.log(clientCreds, 'kkkkkkkkk');
-    
-    
     if (!clientCreds.username || !clientCreds.password) {
       return res.status(httpStatus.BAD_REQUEST).json({
         success: false,
@@ -55,8 +51,6 @@ const getAllReports = async (req, res) => {
         timestamp: new Date().toISOString(),
       });
     }
-
-    // Login to Shiprocket
     const { token } = await shiprocketService.loginToShiprocket(
       clientCreds.username,
       clientCreds.password
@@ -64,7 +58,6 @@ const getAllReports = async (req, res) => {
 
     logger.info(`Shiprocket auth successful for client: ${client}`);
 
-    // Get all reports
     const reports = await shiprocketService.getAllReports(token);
 
     logger.info(`Successfully fetched reports for client: ${client}`);

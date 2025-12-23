@@ -71,7 +71,6 @@ const getAllReports = async (token) => {
   const fromDate = new Date();
   fromDate.setMonth(fromDate.getMonth() - 1);
 
-  // Fix: Use numeric date format YYYY-MM-DD
   const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
